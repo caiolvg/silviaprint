@@ -91,13 +91,13 @@ function generateImages(data) {
   if (data.qr_data || data.tracking_number) {
     const qrData = data.qr_data || data.tracking_number;
     document.getElementById("qrImage").src =
-      `/api/generate-qr/${encodeURIComponent(qrData)}`;
+      `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&size=260`;
   }
 
   // Gerar Código de Barras
   if (data.tracking_number) {
     document.getElementById("barcodeImage").src =
-      `/api/generate-barcode/${encodeURIComponent(data.tracking_number)}`;
+      `https://bwipjs-api.metafloor.com/?bcid=code128&scale=3&includetext=true&text=${encodeURIComponent(data.tracking_number)}`;
   }
 
   // Gerar Preview da Etiqueta Completa
@@ -114,7 +114,14 @@ function generateLabelPreview(data) {
     },
     body: JSON.stringify(data),
   })
-    .then((response) => response.blob())
+    .then(async (response) => {
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || "Falha ao gerar preview da etiqueta");
+      }
+
+      return response.blob();
+    })
     .then((blob) => {
       const url = URL.createObjectURL(blob);
       document.getElementById("previewImage").src = url;
@@ -122,7 +129,11 @@ function generateLabelPreview(data) {
     })
     .catch((error) => {
       console.error("Erro ao gerar preview:", error);
-      showMessage("Erro ao gerar visualização da etiqueta", "error");
+      previewSection.style.display = "none";
+      showMessage(
+        error.message || "Erro ao gerar visualização da etiqueta",
+        "error",
+      );
     });
 }
 
