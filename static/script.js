@@ -46,7 +46,7 @@ function handleFile(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  showMessage("🔄 Processando arquivo...", "info");
+  showMessage("Processando arquivo...", "info");
 
   fetch("/api/upload", {
     method: "POST",
@@ -57,14 +57,14 @@ function handleFile(file) {
       if (data.success) {
         displayInfo(data.data);
         generateImages(data.data);
-        showMessage("✅ Arquivo processado com sucesso!", "success");
+        showMessage("Arquivo processado com sucesso!", "success");
       } else {
-        showMessage("❌ Erro: " + data.error, "error");
+        showMessage("Erro: " + data.error, "error");
       }
     })
     .catch((error) => {
       console.error("Erro:", error);
-      showMessage("❌ Erro ao processar arquivo", "error");
+      showMessage("Erro ao processar arquivo", "error");
     });
 }
 
@@ -111,7 +111,7 @@ function downloadImage(type) {
   link.click();
 
   showMessage(
-    `✅ ${type === "qr" ? "QR Code" : "Código de Barras"} baixado!`,
+    `${type === "qr" ? "QR Code" : "Código de Barras"} baixado!`,
     "success",
   );
 }
@@ -123,5 +123,5 @@ function resetForm() {
   actionsSection.style.display = "none";
   document.getElementById("qrImage").src = "";
   document.getElementById("barcodeImage").src = "";
-  showMessage("🔄 Pronto para processar outro arquivo", "info");
+  showMessage("Pronto para processar outro arquivo", "info");
 }

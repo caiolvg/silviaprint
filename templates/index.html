@@ -12,45 +12,45 @@
   <body>
     <div class="container">
       <header>
-        <h1>🏷️ Gerador de Etiquetas Silviaprint</h1>
-        <p>Leia um arquivo de etiqueta e gere QR Code e Código de Barras</p>
+        <h1>Gerador de Etiquetas</h1>
+        <p>Silviaprint</p>
       </header>
 
       <main>
         <section class="upload-section">
-          <h2>Passo 1: Fazer Upload da Etiqueta</h2>
+          <h2>Upload de Etiqueta</h2>
           <div class="drop-zone" id="dropZone">
             <input type="file" id="fileInput" accept=".txt,.zpl" hidden />
-            <p>📁 Arraste o arquivo aqui ou clique para selecionar</p>
+            <p>Arraste o arquivo aqui ou clique para selecionar</p>
             <small>Aceita arquivos: .txt, .zpl</small>
           </div>
         </section>
 
         <section class="info-section" id="infoSection" style="display: none">
-          <h2>Passo 2: Informações Extraídas</h2>
+          <h2>Informações Extraídas</h2>
           <div class="info-grid">
             <div class="info-card">
-              <h3>📦 ID do Pacote</h3>
+              <h3>ID do Pacote</h3>
               <p id="packageId" class="info-value">-</p>
             </div>
             <div class="info-card">
-              <h3>📍 Rastreamento</h3>
+              <h3>Rastreamento</h3>
               <p id="trackingNumber" class="info-value">-</p>
             </div>
             <div class="info-card">
-              <h3>👤 Remetente</h3>
+              <h3>Remetente</h3>
               <p id="sender" class="info-value">-</p>
             </div>
             <div class="info-card">
-              <h3>👥 Destinatário</h3>
+              <h3>Destinatário</h3>
               <p id="receiver" class="info-value">-</p>
             </div>
             <div class="info-card">
-              <h3>🏙️ Destino</h3>
+              <h3>Destino</h3>
               <p id="destination" class="info-value">-</p>
             </div>
             <div class="info-card">
-              <h3>📮 CEP</h3>
+              <h3>CEP</h3>
               <p id="cep" class="info-value">-</p>
             </div>
           </div>
@@ -61,7 +61,7 @@
           id="imagesSection"
           style="display: none"
         >
-          <h2>Passo 3: Imagens Geradas</h2>
+          <h2>Imagens Geradas</h2>
 
           <div class="images-grid">
             <div class="image-card">
@@ -95,7 +95,7 @@
           style="display: none"
         >
           <button class="btn btn-primary" onclick="resetForm()">
-            📤 Enviar Outro Arquivo
+            Enviar Outro Arquivo
           </button>
         </section>
       </main>
