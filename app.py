@@ -4,6 +4,7 @@ import qrcode
 import barcode
 from barcode.writer import ImageWriter
 from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
 import re
 import os
 
@@ -93,6 +94,104 @@ def generate_barcode(data):
         print(f"Erro ao gerar code de barras: {e}")
         return None
 
+def generate_label_preview(info):
+    """Gera uma imagem visual completa da etiqueta"""
+    try:
+        # Dimensões da etiqueta (100mm x 150mm, 300dpi)
+        width, height = 1200, 800
+        
+        # Criar imagem com fundo branco
+        img = Image.new('RGB', (width, height), color='white')
+        draw = ImageDraw.Draw(img)
+        
+        # Tentar usar fonte do sistema, caso contrário usar fonte padrão
+        try:
+            title_font = ImageFont.truetype("arial.ttf", 24)
+            label_font = ImageFont.truetype("arial.ttf", 16)
+            value_font = ImageFont.truetype("arial.ttf", 18)
+            small_font = ImageFont.truetype("arial.ttf", 12)
+        except:
+            title_font = ImageFont.load_default()
+            label_font = ImageFont.load_default()
+            value_font = ImageFont.load_default()
+            small_font = ImageFont.load_default()
+        
+        # Cores
+        black = (0, 0, 0)
+        gray = (100, 100, 100)
+        light_gray = (220, 220, 220)
+        
+        # Margem
+        margin = 40
+        
+        # ===== SEÇÃO SUPERIOR ESQUERDA: INFORMAÇÕES DO REMETENTE =====
+        draw.rectangle([margin, margin, margin + 450, margin + 120], outline=gray, width=2)
+        draw.text((margin + 15, margin + 10), "REMETENTE", fill=black, font=label_font)
+        sender_text = info.get('sender', 'N/A')
+        if sender_text and len(sender_text) > 40:
+            sender_text = sender_text[:40]
+        draw.text((margin + 15, margin + 40), sender_text, fill=black, font=small_font)
+        
+        # ===== SEÇÃO CENTRAL ESQUERDA: INFORMAÇÕES DO DESTINATÁRIO =====
+        draw.rectangle([margin, margin + 150, margin + 450, margin + 380], outline=gray, width=2)
+        draw.text((margin + 15, margin + 160), "DESTINATARIO", fill=black, font=label_font)
+        
+        receiver = info.get('receiver', 'N/A')
+        draw.text((margin + 15, margin + 195), receiver[:35], fill=black, font=value_font)
+        
+        destination = info.get('destination', 'N/A')
+        draw.text((margin + 15, margin + 235), f"Destino: {destination}", fill=black, font=small_font)
+        
+        cep = info.get('cep', 'N/A')
+        draw.text((margin + 15, margin + 265), f"CEP: {cep}", fill=black, font=small_font)
+        
+        package_id = info.get('package_id', 'N/A')
+        draw.text((margin + 15, margin + 295), f"Pacote: {package_id}", fill=black, font=small_font)
+        
+        tracking = info.get('tracking_number', 'N/A')
+        draw.text((margin + 15, margin + 325), f"Rastreamento:", fill=gray, font=small_font)
+        draw.text((margin + 15, margin + 350), tracking, fill=black, font=value_font)
+        
+        # ===== SEÇÃO DIREITA: QR CODE E CÓDIGO DE BARRAS =====
+        try:
+            # Gerar QR Code
+            qr_data = info.get('qr_data') or info.get('tracking_number', '')
+            if qr_data:
+                qr_img_io = generate_qr_code(qr_data)
+                qr_img = Image.open(qr_img_io)
+                qr_img = qr_img.resize((200, 200), Image.Resampling.LANCZOS)
+                img.paste(qr_img, (margin + 500, margin + 40))
+        except Exception as e:
+            print(f"Erro ao adicionar QR: {e}")
+        
+        try:
+            # Gerar Código de Barras
+            tracking = info.get('tracking_number', '')
+            if tracking:
+                barcode_img_io = generate_barcode(tracking)
+                if barcode_img_io:
+                    barcode_img = Image.open(barcode_img_io)
+                    # Redimensionar código de barras
+                    barcode_img = barcode_img.resize((280, 100), Image.Resampling.LANCZOS)
+                    img.paste(barcode_img, (margin + 480, margin + 280))
+        except Exception as e:
+            print(f"Erro ao adicionar barcode: {e}")
+        
+        # ===== RODAPÉ: INFORMAÇÕES ADICIONAIS =====
+        draw.line([(margin, margin + 420), (width - margin, margin + 420)], fill=light_gray, width=1)
+        draw.text((margin, margin + 445), "Silviaprint - Gerador de Etiquetas", fill=gray, font=small_font)
+        draw.text((width - margin - 250, margin + 445), f"Gerado em: {info.get('package_id', '-')}", fill=gray, font=small_font)
+        
+        # Salvar em BytesIO
+        img_io = BytesIO()
+        img.save(img_io, format='PNG')
+        img_io.seek(0)
+        return img_io
+        
+    except Exception as e:
+        print(f"Erro ao gerar preview da etiqueta: {e}")
+        return None
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -141,6 +240,19 @@ def get_barcode(data):
             return send_file(img_io, mimetype='image/png')
         else:
             return jsonify({'error': 'Erro ao gerar código de barras'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-label-preview', methods=['POST'])
+def generate_label_preview_endpoint():
+    """Gera e retorna preview completo da etiqueta"""
+    try:
+        data = request.json
+        img_io = generate_label_preview(data)
+        if img_io:
+            return send_file(img_io, mimetype='image/png')
+        else:
+            return jsonify({'error': 'Erro ao gerar preview da etiqueta'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

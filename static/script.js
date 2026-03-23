@@ -1,9 +1,13 @@
 const dropZone = document.getElementById("dropZone");
 const fileInput = document.getElementById("fileInput");
 const infoSection = document.getElementById("infoSection");
+const previewSection = document.getElementById("previewSection");
 const imagesSection = document.getElementById("imagesSection");
 const actionsSection = document.getElementById("actionsSection");
 const messageDiv = document.getElementById("message");
+
+// Variável global para armazenar os dados da etiqueta
+let currentLabelData = null;
 
 // Drag and drop
 dropZone.addEventListener("click", () => fileInput.click());
@@ -69,6 +73,7 @@ function handleFile(file) {
 }
 
 function displayInfo(data) {
+  currentLabelData = data;
   document.getElementById("packageId").textContent = data.package_id || "-";
   document.getElementById("trackingNumber").textContent =
     data.tracking_number || "-";
@@ -95,33 +100,71 @@ function generateImages(data) {
       `/api/generate-barcode/${encodeURIComponent(data.tracking_number)}`;
   }
 
+  // Gerar Preview da Etiqueta Completa
+  generateLabelPreview(data);
+
   imagesSection.style.display = "block";
 }
 
+function generateLabelPreview(data) {
+  fetch("/api/generate-label-preview", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.blob())
+    .then((blob) => {
+      const url = URL.createObjectURL(blob);
+      document.getElementById("previewImage").src = url;
+      previewSection.style.display = "block";
+    })
+    .catch((error) => {
+      console.error("Erro ao gerar preview:", error);
+      showMessage("Erro ao gerar visualização da etiqueta", "error");
+    });
+}
+
 function downloadImage(type) {
-  const imageElement =
-    type === "qr"
-      ? document.getElementById("qrImage")
-      : document.getElementById("barcodeImage");
+  let imageElement;
+  let filename;
+
+  if (type === "qr") {
+    imageElement = document.getElementById("qrImage");
+    filename = "qr-code.png";
+  } else if (type === "barcode") {
+    imageElement = document.getElementById("barcodeImage");
+    filename = "codigo-barras.png";
+  } else if (type === "preview") {
+    imageElement = document.getElementById("previewImage");
+    filename = "etiqueta-completa.png";
+  }
+
+  if (!imageElement || !imageElement.src) {
+    showMessage("Imagem não disponível", "error");
+    return;
+  }
+
   const imageSrc = imageElement.src;
 
   const link = document.createElement("a");
   link.href = imageSrc;
-  link.download = type === "qr" ? "qr-code.png" : "codigo-barras.png";
+  link.download = filename;
   link.click();
 
-  showMessage(
-    `${type === "qr" ? "QR Code" : "Código de Barras"} baixado!`,
-    "success",
-  );
+  showMessage(`${filename.replace(".png", "")} baixado!`, "success");
 }
 
 function resetForm() {
   fileInput.value = "";
+  currentLabelData = null;
   infoSection.style.display = "none";
+  previewSection.style.display = "none";
   imagesSection.style.display = "none";
   actionsSection.style.display = "none";
   document.getElementById("qrImage").src = "";
   document.getElementById("barcodeImage").src = "";
+  document.getElementById("previewImage").src = "";
   showMessage("Pronto para processar outro arquivo", "info");
 }

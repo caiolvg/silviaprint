@@ -9,7 +9,9 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   background: #000000;
   color: #ffffff;
   min-height: 100vh;
@@ -80,7 +82,11 @@ section h2 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
   pointer-events: none;
 }
 
@@ -190,6 +196,36 @@ section h2 {
   max-height: 100%;
   object-fit: contain;
   filter: brightness(0.95);
+}
+
+/* Preview Section */
+.preview-section {
+  background: #262626;
+  border: 1px solid #424245;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 60px;
+}
+
+.preview-container {
+  background: #1d1d1d;
+  border: 1px solid #424245;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.preview-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Buttons */
