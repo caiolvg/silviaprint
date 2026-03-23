@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Etiquetas - Silviaprint</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🏷️ Gerador de Etiquetas Silviaprint</h1>
+        <p>Leia um arquivo de etiqueta e gere QR Code e Código de Barras</p>
+      </header>
+
+      <main>
+        <section class="upload-section">
+          <h2>Passo 1: Fazer Upload da Etiqueta</h2>
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept=".txt,.zpl" hidden />
+            <p>📁 Arraste o arquivo aqui ou clique para selecionar</p>
+            <small>Aceita arquivos: .txt, .zpl</small>
+          </div>
+        </section>
+
+        <section class="info-section" id="infoSection" style="display: none">
+          <h2>Passo 2: Informações Extraídas</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <h3>📦 ID do Pacote</h3>
+              <p id="packageId" class="info-value">-</p>
+            </div>
+            <div class="info-card">
+              <h3>📍 Rastreamento</h3>
+              <p id="trackingNumber" class="info-value">-</p>
+            </div>
+            <div class="info-card">
+              <h3>👤 Remetente</h3>
+              <p id="sender" class="info-value">-</p>
+            </div>
+            <div class="info-card">
+              <h3>👥 Destinatário</h3>
+              <p id="receiver" class="info-value">-</p>
+            </div>
+            <div class="info-card">
+              <h3>🏙️ Destino</h3>
+              <p id="destination" class="info-value">-</p>
+            </div>
+            <div class="info-card">
+              <h3>📮 CEP</h3>
+              <p id="cep" class="info-value">-</p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="images-section"
+          id="imagesSection"
+          style="display: none"
+        >
+          <h2>Passo 3: Imagens Geradas</h2>
+
+          <div class="images-grid">
+            <div class="image-card">
+              <h3>QR Code</h3>
+              <div class="image-container">
+                <img id="qrImage" alt="QR Code" />
+              </div>
+              <button class="btn btn-download" onclick="downloadImage('qr')">
+                Baixar QR Code
+              </button>
+            </div>
+
+            <div class="image-card">
+              <h3>Código de Barras</h3>
+              <div class="image-container">
+                <img id="barcodeImage" alt="Código de Barras" />
+              </div>
+              <button
+                class="btn btn-download"
+                onclick="downloadImage('barcode')"
+              >
+                Baixar Código de Barras
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="actions-section"
+          id="actionsSection"
+          style="display: none"
+        >
+          <button class="btn btn-primary" onclick="resetForm()">
+            📤 Enviar Outro Arquivo
+          </button>
+        </section>
+      </main>
+
+      <div class="message" id="message"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
