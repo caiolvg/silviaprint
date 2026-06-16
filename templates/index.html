@@ -3,114 +3,161 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador de Etiquetas - Silviaprint</title>
+    <title>Silviaprint - Gerador de Etiquetas</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>Gerador de Etiquetas</h1>
-        <p>Silviaprint</p>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Silviaprint</p>
+          <h1>Central de etiquetas ZPL</h1>
+          <p class="hero-copy">
+            Envie ate 100 etiquetas, arquivos ZIP ou RAR, confira os dados
+            extraidos e visualize cada etiqueta antes de baixar.
+          </p>
+        </div>
+        <div class="hero-stats" aria-label="Resumo da capacidade">
+          <span>100</span>
+          <small>arquivos por lote</small>
+        </div>
       </header>
 
-      <main>
-        <section class="upload-section">
-          <h2>Upload de Etiqueta</h2>
+      <main class="workspace">
+        <section class="upload-panel" aria-labelledby="uploadTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Entrada</p>
+              <h2 id="uploadTitle">Arraste arquivos para processar</h2>
+            </div>
+            <button class="icon-button" type="button" id="clearButton" title="Limpar fila">
+              Limpar
+            </button>
+          </div>
+
           <div class="drop-zone" id="dropZone">
-            <input type="file" id="fileInput" accept=".txt,.zpl" hidden />
-            <p>Arraste o arquivo aqui ou clique para selecionar</p>
-            <small>Aceita arquivos: .txt, .zpl</small>
+            <input
+              type="file"
+              id="fileInput"
+              accept=".txt,.zpl,.zip,.rar"
+              multiple
+              hidden
+            />
+            <strong>Solte aqui ou clique para selecionar</strong>
+            <span>.txt, .zpl, .zip e .rar</span>
           </div>
-        </section>
 
-        <section class="info-section" id="infoSection" style="display: none">
-          <h2>Informações Extraídas</h2>
-          <div class="info-grid">
-            <div class="info-card">
-              <h3>ID do Pacote</h3>
-              <p id="packageId" class="info-value">-</p>
+          <div class="batch-status" id="batchStatus" hidden>
+            <div>
+              <span id="totalCount">0</span>
+              <small>total</small>
             </div>
-            <div class="info-card">
-              <h3>Rastreamento</h3>
-              <p id="trackingNumber" class="info-value">-</p>
+            <div>
+              <span id="successCount">0</span>
+              <small>ok</small>
             </div>
-            <div class="info-card">
-              <h3>Remetente</h3>
-              <p id="sender" class="info-value">-</p>
-            </div>
-            <div class="info-card">
-              <h3>Destinatário</h3>
-              <p id="receiver" class="info-value">-</p>
-            </div>
-            <div class="info-card">
-              <h3>Destino</h3>
-              <p id="destination" class="info-value">-</p>
-            </div>
-            <div class="info-card">
-              <h3>CEP</h3>
-              <p id="cep" class="info-value">-</p>
+            <div>
+              <span id="errorCount">0</span>
+              <small>erros</small>
             </div>
           </div>
         </section>
 
-        <section
-          class="preview-section"
-          id="previewSection"
-          style="display: none"
-        >
-          <h2>Visualização da Etiqueta</h2>
-          <div class="preview-container">
-            <img id="previewImage" alt="Visualização da Etiqueta" />
+        <section class="queue-panel" id="queuePanel" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Fila</p>
+              <h2>Arquivos processados</h2>
+            </div>
+            <input
+              class="search-input"
+              type="search"
+              id="searchInput"
+              placeholder="Buscar por nome, rastreio ou destino"
+            />
           </div>
-          <button class="btn btn-download" onclick="downloadImage('preview')">
-            Baixar Etiqueta Completa
-          </button>
+          <div class="file-list" id="fileList"></div>
         </section>
 
-        <section
-          class="images-section"
-          id="imagesSection"
-          style="display: none"
-        >
-          <h2>Imagens Geradas</h2>
+        <section class="detail-panel" id="detailPanel" hidden>
+          <div class="detail-header">
+            <div>
+              <p class="eyebrow">Etiqueta selecionada</p>
+              <h2 id="selectedFilename">-</h2>
+            </div>
+            <button class="btn btn-primary" type="button" id="previewButton">
+              Gerar preview
+            </button>
+          </div>
 
-          <div class="images-grid">
-            <div class="image-card">
-              <h3>QR Code</h3>
-              <div class="image-container">
+          <div class="detail-grid">
+            <article class="info-card">
+              <small>ID do pacote</small>
+              <strong id="packageId">-</strong>
+            </article>
+            <article class="info-card">
+              <small>Rastreamento</small>
+              <strong id="trackingNumber">-</strong>
+            </article>
+            <article class="info-card">
+              <small>Remetente</small>
+              <strong id="sender">-</strong>
+            </article>
+            <article class="info-card">
+              <small>Destinatario</small>
+              <strong id="receiver">-</strong>
+            </article>
+            <article class="info-card">
+              <small>Destino</small>
+              <strong id="destination">-</strong>
+            </article>
+            <article class="info-card">
+              <small>CEP</small>
+              <strong id="cep">-</strong>
+            </article>
+          </div>
+
+          <div class="media-grid">
+            <article class="media-card preview-card">
+              <div class="media-title">
+                <h3>Etiqueta</h3>
+                <button class="btn btn-secondary" type="button" id="downloadPreviewButton">
+                  Baixar
+                </button>
+              </div>
+              <div class="preview-container">
+                <img id="previewImage" alt="Visualizacao da etiqueta" />
+                <p id="previewPlaceholder">Gere o preview da etiqueta selecionada.</p>
+              </div>
+            </article>
+
+            <article class="media-card">
+              <div class="media-title">
+                <h3>QR Code</h3>
+                <button class="btn btn-secondary" type="button" id="downloadQrButton">
+                  Baixar
+                </button>
+              </div>
+              <div class="asset-container">
                 <img id="qrImage" alt="QR Code" />
               </div>
-              <button class="btn btn-download" onclick="downloadImage('qr')">
-                Baixar QR Code
-              </button>
-            </div>
+            </article>
 
-            <div class="image-card">
-              <h3>Código de Barras</h3>
-              <div class="image-container">
-                <img id="barcodeImage" alt="Código de Barras" />
+            <article class="media-card">
+              <div class="media-title">
+                <h3>Codigo de barras</h3>
+                <button class="btn btn-secondary" type="button" id="downloadBarcodeButton">
+                  Baixar
+                </button>
               </div>
-              <button
-                class="btn btn-download"
-                onclick="downloadImage('barcode')"
-              >
-                Baixar Código de Barras
-              </button>
-            </div>
+              <div class="asset-container">
+                <img id="barcodeImage" alt="Codigo de barras" />
+              </div>
+            </article>
           </div>
-        </section>
-
-        <section
-          class="actions-section"
-          id="actionsSection"
-          style="display: none"
-        >
-          <button class="btn btn-primary" onclick="resetForm()">
-            Enviar Outro Arquivo
-          </button>
         </section>
       </main>
 

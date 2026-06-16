@@ -4,11 +4,13 @@ Um site para ler arquivos de etiqueta em ZPL, extrair os dados principais e rend
 
 ## Funcionalidades
 
-- Upload de arquivos de etiqueta (.txt, .zpl)
+- Upload de ate 100 arquivos de etiqueta por vez (.txt, .zpl)
+- Upload de arquivos compactados .zip e .rar
 - Extração automática de informações principais
 - Renderização da etiqueta Zebra a partir do ZPL real
 - Visualização de QR Code e código de barras
 - Download das imagens geradas
+- Fila organizada com busca, status de processamento e preview por etiqueta
 - Interface responsiva
 
 ## Pré-requisitos
@@ -62,10 +64,11 @@ silviaprint/
 
 ## Como Usar
 
-1. **Upload**: Arraste um arquivo de etiqueta (.txt ou .zpl) ou clique para selecionar
-2. **Extração**: O sistema automaticamente extrai informações do arquivo
-3. **Visualização**: Veja os dados extraídos e a etiqueta Zebra renderizada
-4. **Download**: Baixe o QR Code e Código de Barras em PNG
+1. **Upload**: Arraste ate 100 arquivos de etiqueta (.txt, .zpl, .zip ou .rar) ou clique para selecionar
+2. **Extração**: O sistema automaticamente extrai informações dos arquivos válidos
+3. **Organização**: Use a fila para pesquisar por nome, rastreio, destinatário ou destino
+4. **Visualização**: Selecione uma etiqueta e gere a prévia Zebra quando precisar
+5. **Download**: Baixe a etiqueta renderizada, QR Code ou Código de Barras em PNG
 
 ## Dados Extraídos
 
@@ -86,6 +89,11 @@ silviaprint/
 ## Formato de Arquivo Suportado
 
 O sistema suporta arquivos no formato **ZPL (Zebra Programming Language)**, comumente usado em etiquetas de envio.
+
+Também é possível enviar:
+
+- **.zip**: suportado diretamente pelo Python.
+- **.rar**: exige a dependência `rarfile` e uma ferramenta de extração compatível instalada no servidor, como `unrar`, `bsdtar` ou `unar`.
 
 Exemplo de estrutura extraída:
 
@@ -118,6 +126,10 @@ app.run(debug=True, port=5001)
 ### Erro: "Arquivo não processado"
 
 Verifique se o arquivo está em formato ZPL válido
+
+### Erro ao processar RAR
+
+Instale as dependências do projeto e uma ferramenta de extração RAR no servidor. O Python lê ZIP nativamente, mas RAR depende de ferramenta externa.
 
 ### Erro: preview da etiqueta não aparece
 
