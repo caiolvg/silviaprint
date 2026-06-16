@@ -52,7 +52,7 @@ button {
 .hero {
   min-height: 260px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
+  grid-template-columns: 1fr;
   align-items: end;
   gap: 32px;
   padding: 44px;
@@ -77,42 +77,6 @@ button {
   font-size: clamp(2.4rem, 7vw, 5.9rem);
   font-weight: 700;
   line-height: 0.94;
-}
-
-.hero-copy {
-  max-width: 680px;
-  margin-top: 22px;
-  color: #e8ddcf;
-  font-size: 1.04rem;
-  line-height: 1.65;
-}
-
-.hero-stats {
-  min-height: 164px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 22px;
-  border: 1px solid rgba(247, 241, 230, 0.32);
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(255, 250, 240, 0.1),
-    rgba(255, 250, 240, 0.1) 8px,
-    transparent 8px,
-    transparent 16px
-  );
-}
-
-.hero-stats span {
-  font-size: 4.2rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.hero-stats small {
-  color: #e8ddcf;
-  font-weight: 700;
-  text-transform: uppercase;
 }
 
 .workspace {
@@ -500,8 +464,7 @@ h2 {
 }
 
 @media (max-width: 1080px) {
-  .workspace,
-  .hero {
+  .workspace {
     grid-template-columns: 1fr;
   }
 
@@ -510,9 +473,6 @@ h2 {
     grid-column: auto;
   }
 
-  .hero-stats {
-    min-height: auto;
-  }
 }
 
 @media (max-width: 780px) {
