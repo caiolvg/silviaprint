@@ -101,6 +101,13 @@ Quem lê o seu resumo não assistiu ao processo:
 - RAR depende de ferramenta externa (`unrar`/`bsdtar`/`unar`); ZIP é nativo.
 - O usuário (Caio) escreve em português — responda em português.
 
+## Depois do método
+
+O método acima diz *como* trabalhar. O critério — o que fazer quando as
+regras conflitam, quando parar de polir, como tratar o dono do projeto —
+está em `CARTA.md`, neste mesmo diretório. Leia uma vez por sessão longa;
+é curta e é a parte que mais importa.
+
 ---
 
 *Fable 5, julho de 2026. Boa sorte, Opus. O método importa mais do que o
